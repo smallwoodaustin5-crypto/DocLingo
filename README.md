@@ -1,19 +1,18 @@
-# DocLingo Web starter
+# DocLingo Web (working prototype)
 
-A polished responsive frontend prototype for DocLingo. Includes dark/light mode, navigation, translation workspace, auth modal, glossary, study mode, history, cloud import placeholders, and Firebase SDK wiring.
+This is an interactive website prototype. It includes functional navigation, dark/light mode, local history/glossary persistence, text-file import, browser speech recognition/text-to-speech, export, copy, phrasebook translation, and Firebase email/provider auth hooks.
 
-## Run
-1. Install Node.js.
-2. Copy `.env.example` to `.env`.
-3. Replace Firebase placeholders with your Firebase Web App config.
-4. `npm install`
-5. `npm run dev`
+## Start
+- Install Node.js
+- Copy `.env.example` to `.env` and fill in Firebase Web config values.
+- `npm install`
+- `npm run dev`
 
 ## Firebase
-- Enable Email/Password, Google, Apple, Microsoft in Firebase Authentication.
-- Add your deployed domains under Authentication > Settings > Authorized domains.
-- This app intentionally does **not** automatically sign users in. Users must click Sign in or Create account.
-- Firebase auth actions are wired in `src/App.jsx`; Firebase config is in `src/firebase.js`.
+Enable Email/Password, Google, Apple, and Microsoft providers in Firebase Authentication. Add the deployed site domain under Authentication > Settings > Authorized domains. Login is never automatic; auth only happens when the user clicks a login/register/provider button.
 
-## Not yet connected
-Translation/OCR/document parsing, real cloud-drive OAuth, export, billing, sharing, back-translation, confidence scores, and server-side APIs are UI placeholders. Connect secure server functions/APIs before production. Do not put secret API keys in frontend environment variables.
+## Honest limitations
+- Translation is a tiny built-in phrasebook demo, not a real translation engine. Configure a secure backend for Google Cloud Translation or DeepL; do not expose provider secret keys in frontend code.
+- Camera/scanner features are deliberately disabled for the website.
+- PDF/DOCX/PPTX text extraction and cloud-drive OAuth are placeholders.
+- History and glossary are persisted in localStorage. Firebase Auth is wired; Firestore sync is not fully implemented.
