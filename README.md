@@ -1,19 +1,28 @@
-# DocLingo Web starter
+# DocLingo GitHub Pages files
 
-A polished responsive frontend prototype for DocLingo. Includes dark/light mode, navigation, translation workspace, auth modal, glossary, study mode, history, cloud import placeholders, and Firebase SDK wiring.
+These files are a static GitHub Pages-friendly starter with Firebase Email/Password, Google sign-in, Phone SMS authentication, a signed-in welcome dashboard, and random language/country facts.
 
-## Run
-1. Install Node.js.
-2. Copy `.env.example` to `.env`.
-3. Replace Firebase placeholders with your Firebase Web App config.
-4. `npm install`
-5. `npm run dev`
+## Install
+1. Add/replace `index.html`, `style.css`, `main.js`, and `firebase-config.js` in the root of your `doclingo2` branch.
+2. In `firebase-config.js`, replace `PASTE_API_KEY`, `PASTE_MESSAGING_SENDER_ID`, and `PASTE_APP_ID` with the Web App config from Firebase Console > Project settings > Your apps.
+3. In Firebase Authentication > Sign-in method, enable Email/Password, Google, and Phone.
+4. Authentication > Settings: add `smallwoodaustin5-crypto.github.io` to Authorized domains.
+5. For phone auth, enable Phone and use reCAPTCHA. For testing, configure test phone numbers in Firebase Auth.
+6. In Firestore, create a database and add rules. The client writes a basic `users/{uid}` profile document after login. Suggested starting rules:
 
-## Firebase
-- Enable Email/Password, Google, Apple, Microsoft in Firebase Authentication.
-- Add your deployed domains under Authentication > Settings > Authorized domains.
-- This app intentionally does **not** automatically sign users in. Users must click Sign in or Create account.
-- Firebase auth actions are wired in `src/App.jsx`; Firebase config is in `src/firebase.js`.
+```rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
 
-## Not yet connected
-Translation/OCR/document parsing, real cloud-drive OAuth, export, billing, sharing, back-translation, confidence scores, and server-side APIs are UI placeholders. Connect secure server functions/APIs before production. Do not put secret API keys in frontend environment variables.
+## Notes
+- GitHub Pages deployment is static; the relative script and stylesheet paths work under `/DocLingo/`.
+- Firebase web config values are not server secrets. Security comes from Authentication and Firestore Security Rules. Do not put private service-account keys in this repository.
+- The translation panel is UI-only and does not call a translation provider yet.
+- After committing, wait for GitHub Pages to deploy and refresh with Ctrl+Shift+R.

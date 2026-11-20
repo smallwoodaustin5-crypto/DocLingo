@@ -1,2 +1,750 @@
-<!doctype html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="theme-color" content="#7c3aed"/><title>DocLingo — Translate without losing meaning</title></head><body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10101a">
+
+  <title>DocLingo — Language, made closer</title>
+
+  <meta
+    name="description"
+    content="Your personal language companion. Explore languages, translate text, and discover cultures around the world."
+  />
+
+  <link rel="stylesheet" href="./style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+
+<body>
+
+  <!-- ==========================================
+       NAVIGATION
+  =========================================== -->
+
+  <header class="navbar">
+    <div class="container nav-container">
+
+      <a href="#" class="logo">
+        <span class="logo-icon">D</span>
+        <span>DocLingo</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#translator">Translator</a>
+        <a href="#about">About</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button
+          id="openAuthBtn"
+          class="btn btn-primary"
+          type="button"
+        >
+          Sign in
+        </button>
+
+        <button
+          id="signOutBtn"
+          class="btn btn-secondary hidden"
+          type="button"
+        >
+          Sign out
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+
+  <!-- ==========================================
+       CONNECTION STATUS
+  =========================================== -->
+
+  <div id="connectionStatus" class="connection-status">
+    <i></i>
+    <span>Connecting...</span>
+  </div>
+
+
+  <!-- ==========================================
+       WELCOME / HERO SECTION
+  =========================================== -->
+
+  <main>
+
+    <section id="welcomePanel" class="hero">
+
+      <div class="container hero-container">
+
+        <div class="hero-content">
+
+          <div class="hero-badge">
+            <span class="badge-dot"></span>
+            Your world, without language barriers
+          </div>
+
+          <h1>
+            Language is the
+            <span class="gradient-text">key to connection.</span>
+          </h1>
+
+          <p class="hero-description">
+            Explore new languages, discover cultures, and make the
+            world feel a little closer. Your journey starts here.
+          </p>
+
+          <div class="hero-buttons">
+
+            <button
+              id="heroGetStarted"
+              class="btn btn-primary btn-large"
+              type="button"
+            >
+              Get started
+              <span>→</span>
+            </button>
+
+            <a href="#features" class="btn btn-secondary btn-large">
+              Explore DocLingo
+            </a>
+
+          </div>
+
+          <div class="hero-stats">
+
+            <div class="stat">
+              <strong>7,000+</strong>
+              <span>Languages worldwide</span>
+            </div>
+
+            <div class="stat-divider"></div>
+
+            <div class="stat">
+              <strong>195</strong>
+              <span>Countries to explore</span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="hero-visual">
+
+          <div class="hero-glow"></div>
+
+          <div class="language-card language-card-main">
+
+            <div class="language-card-top">
+              <span>Today's language</span>
+              <span class="language-card-icon">✦</span>
+            </div>
+
+            <div class="language-symbol">こんにちは</div>
+
+            <h3>Japanese</h3>
+
+            <p>Hello · Konnichiwa</p>
+
+            <div class="language-card-bottom">
+              <span>🇯🇵 Japan</span>
+              <span>Explore →</span>
+            </div>
+
+          </div>
+
+          <div class="floating-card floating-card-top">
+            <span class="floating-emoji">🌍</span>
+            <div>
+              <strong>Explore cultures</strong>
+              <span>One word at a time</span>
+            </div>
+          </div>
+
+          <div class="floating-card floating-card-bottom">
+            <span class="floating-emoji">💬</span>
+            <div>
+              <strong>Bonjour!</strong>
+              <span>French · Hello</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         FEATURES
+    =========================================== -->
+
+    <section id="features" class="features-section">
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <div class="section-label">
+            DISCOVER
+          </div>
+
+          <h2>
+            Your journey into
+            <span class="gradient-text">every language.</span>
+          </h2>
+
+          <p>
+            Everything you need to explore the world through language.
+          </p>
+
+        </div>
+
+        <div class="features-grid">
+
+          <article class="feature-card">
+
+            <div class="feature-icon">🌐</div>
+
+            <h3>Explore Languages</h3>
+
+            <p>
+              Discover languages from around the world, their origins,
+              and the cultures behind them.
+            </p>
+
+          </article>
+
+          <article class="feature-card">
+
+            <div class="feature-icon">💬</div>
+
+            <h3>Translate Instantly</h3>
+
+            <p>
+              Translate words and phrases to help you communicate
+              across language barriers.
+            </p>
+
+          </article>
+
+          <article class="feature-card">
+
+            <div class="feature-icon">🌍</div>
+
+            <h3>Discover Cultures</h3>
+
+            <p>
+              Learn interesting facts about countries, traditions,
+              and the people who live there.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         TRANSLATOR
+    =========================================== -->
+
+    <section id="translator" class="translator-section">
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <div class="section-label">
+            TRANSLATOR
+          </div>
+
+          <h2>
+            Say it in
+            <span class="gradient-text">another language.</span>
+          </h2>
+
+          <p>
+            Enter a phrase and discover how it sounds in another language.
+          </p>
+
+        </div>
+
+        <div class="translator-card">
+
+          <div class="translator-header">
+
+            <div class="translator-language">
+              <span>🇺🇸</span>
+              <span>English</span>
+            </div>
+
+            <span class="translator-arrow">→</span>
+
+            <div class="translator-language">
+
+              <select id="languageSelect">
+
+                <option value="Spanish">🇪🇸 Spanish</option>
+                <option value="French">🇫🇷 French</option>
+                <option value="Japanese">🇯🇵 Japanese</option>
+                <option value="German">🇩🇪 German</option>
+                <option value="Korean">🇰🇷 Korean</option>
+                <option value="Italian">🇮🇹 Italian</option>
+                <option value="Portuguese">🇵🇹 Portuguese</option>
+                <option value="Chinese">🇨🇳 Chinese</option>
+                <option value="Russian">🇷🇺 Russian</option>
+                <option value="Arabic">🇸🇦 Arabic</option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+          <textarea
+            id="translateInput"
+            placeholder="Type something you want to translate..."
+            rows="4"
+            maxlength="5000"
+          ></textarea>
+
+          <div class="translator-footer">
+
+            <span class="translator-hint">
+              Enter up to 5,000 characters
+            </span>
+
+            <button
+              id="translateBtn"
+              class="btn btn-primary"
+              type="button"
+            >
+              Translate ↗
+            </button>
+
+          </div>
+
+          <div
+            id="translateOutput"
+            class="translate-output hidden"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         USER DASHBOARD
+    =========================================== -->
+
+    <section id="dashboard" class="dashboard-section hidden">
+
+      <div class="container">
+
+        <div class="dashboard-header">
+
+          <div>
+
+            <div class="section-label">
+              YOUR DASHBOARD
+            </div>
+
+            <h2 id="welcomeTitle">
+              Welcome back!
+            </h2>
+
+            <p id="welcomeSub">
+              Here's a little discovery for your language journey.
+            </p>
+
+          </div>
+
+          <div class="user-avatar" id="userAvatar">
+            D
+          </div>
+
+        </div>
+
+
+        <!-- DAILY FACT -->
+
+        <div class="fact-card">
+
+          <div class="fact-card-left">
+
+            <div class="fact-card-label">
+              ✦ DAILY DISCOVERY
+            </div>
+
+            <span id="factCategory" class="fact-category">
+              LANGUAGE
+            </span>
+
+            <h3 id="factTitle">
+              Discover something new
+            </h3>
+
+            <p id="factText">
+              Interesting language facts will appear here.
+            </p>
+
+            <button
+              id="newFactBtn"
+              class="btn btn-secondary"
+              type="button"
+            >
+              Discover another fact ↗
+            </button>
+
+          </div>
+
+          <div class="fact-card-visual">
+            <div class="fact-globe">🌍</div>
+          </div>
+
+        </div>
+
+
+        <!-- PROFILE -->
+
+        <div class="profile-card">
+
+          <div class="profile-header">
+            <h3>Your Profile</h3>
+          </div>
+
+          <div class="profile-content">
+
+            <div class="profile-avatar" id="profileAvatar">
+              D
+            </div>
+
+            <div class="profile-details">
+
+              <div class="profile-detail">
+                <span>Name</span>
+                <strong id="profileName">User</strong>
+              </div>
+
+              <div class="profile-detail">
+                <span>Email / Phone</span>
+                <strong id="profileEmail">—</strong>
+              </div>
+
+              <div class="profile-detail">
+                <span>Sign-in method</span>
+                <strong id="profileMethod">—</strong>
+              </div>
+
+              <div class="profile-detail">
+                <span>Membership</span>
+                <strong id="profileCreated">Member</strong>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         ABOUT
+    =========================================== -->
+
+    <section id="about" class="about-section">
+
+      <div class="container">
+
+        <div class="about-content">
+
+          <div class="section-label">
+            ABOUT DOCLINGO
+          </div>
+
+          <h2>
+            A world of knowledge.
+            <span class="gradient-text">One language at a time.</span>
+          </h2>
+
+          <p>
+            DocLingo was created to make language learning and cultural
+            discovery feel simple, exciting, and accessible. Whether you're
+            learning your first phrase or exploring a country you've never
+            visited, there's always something new to discover.
+          </p>
+
+          <button
+            id="aboutGetStarted"
+            class="btn btn-primary btn-large"
+            type="button"
+          >
+            Start exploring →
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ==========================================
+       FOOTER
+  =========================================== -->
+
+  <footer class="footer">
+
+    <div class="container footer-container">
+
+      <a href="#" class="logo">
+        <span class="logo-icon">D</span>
+        <span>DocLingo</span>
+      </a>
+
+      <p>
+        Language, made closer.
+      </p>
+
+      <span class="footer-copyright">
+        © 2026 DocLingo
+      </span>
+
+    </div>
+
+  </footer>
+
+
+  <!-- ==========================================
+       AUTHENTICATION MODAL
+  =========================================== -->
+
+  <div id="authModal" class="auth-modal hidden">
+
+    <div class="auth-modal-content">
+
+      <button
+        id="closeAuthBtn"
+        class="modal-close"
+        type="button"
+        aria-label="Close"
+      >
+        ×
+      </button>
+
+
+      <div class="auth-logo">
+        <span class="logo-icon">D</span>
+      </div>
+
+      <h2 id="authTitle">
+        Welcome back
+      </h2>
+
+      <p id="authDescription">
+        Sign in to continue your language journey.
+      </p>
+
+
+      <!-- LOGIN / REGISTER TABS -->
+
+      <div class="auth-tabs">
+
+        <button
+          id="loginTab"
+          class="auth-tab active"
+          type="button"
+        >
+          Sign in
+        </button>
+
+        <button
+          id="registerTab"
+          class="auth-tab"
+          type="button"
+        >
+          Create account
+        </button>
+
+      </div>
+
+
+      <!-- EMAIL AUTH -->
+
+      <form id="emailForm">
+
+        <label
+          id="nameLabel"
+          for="nameInput"
+          class="hidden"
+        >
+          Full name
+        </label>
+
+        <input
+          id="nameInput"
+          type="text"
+          placeholder="Your name"
+          autocomplete="name"
+          class="hidden"
+        />
+
+        <label for="emailInput">
+          Email address
+        </label>
+
+        <input
+          id="emailInput"
+          type="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+          required
+        />
+
+        <label for="passwordInput">
+          Password
+        </label>
+
+        <input
+          id="passwordInput"
+          type="password"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+          minlength="6"
+          required
+        />
+
+        <button
+          id="emailSubmit"
+          class="btn btn-primary auth-submit"
+          type="submit"
+        >
+          Sign in
+        </button>
+
+      </form>
+
+
+      <!-- AUTH ERROR -->
+
+      <div
+        id="authError"
+        class="auth-error hidden"
+        role="alert"
+      ></div>
+
+
+      <!-- DIVIDER -->
+
+      <div class="auth-divider">
+        <span>OR</span>
+      </div>
+
+
+      <!-- GOOGLE SIGN IN -->
+
+      <button
+        id="googleBtn"
+        class="btn btn-google"
+        type="button"
+      >
+        <span class="google-icon">G</span>
+        Continue with Google
+      </button>
+
+
+      <!-- PHONE AUTH -->
+
+      <div class="phone-auth">
+
+        <label for="phoneInput">
+          Phone number
+        </label>
+
+        <input
+          id="phoneInput"
+          type="tel"
+          placeholder="+1 555 123 4567"
+          autocomplete="tel"
+        />
+
+        <button
+          id="sendCodeBtn"
+          class="btn btn-secondary auth-submit"
+          type="button"
+        >
+          Send verification code
+        </button>
+
+        <div
+          id="recaptcha-container"
+          class="recaptcha-container"
+        ></div>
+
+        <div id="codeArea" class="hidden">
+
+          <label for="codeInput">
+            Verification code
+          </label>
+
+          <input
+            id="codeInput"
+            type="text"
+            inputmode="numeric"
+            placeholder="Enter code"
+            autocomplete="one-time-code"
+          />
+
+          <button
+            id="verifyCodeBtn"
+            class="btn btn-primary auth-submit"
+            type="button"
+          >
+            Verify code
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <p class="auth-terms">
+        By continuing, you agree to use DocLingo responsibly.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- ==========================================
+       JAVASCRIPT
+  =========================================== -->
+
+  <script type="module" src="./main.js"></script>
+
+</body>
+</html>
