@@ -1,18 +1,28 @@
-# DocLingo Web (working prototype)
+# DocLingo GitHub Pages files
 
-This is an interactive website prototype. It includes functional navigation, dark/light mode, local history/glossary persistence, text-file import, browser speech recognition/text-to-speech, export, copy, phrasebook translation, and Firebase email/provider auth hooks.
+These files are a static GitHub Pages-friendly starter with Firebase Email/Password, Google sign-in, Phone SMS authentication, a signed-in welcome dashboard, and random language/country facts.
 
-## Start
-- Install Node.js
-- Copy `.env.example` to `.env` and fill in Firebase Web config values.
-- `npm install`
-- `npm run dev`
+## Install
+1. Add/replace `index.html`, `style.css`, `main.js`, and `firebase-config.js` in the root of your `doclingo2` branch.
+2. In `firebase-config.js`, replace `PASTE_API_KEY`, `PASTE_MESSAGING_SENDER_ID`, and `PASTE_APP_ID` with the Web App config from Firebase Console > Project settings > Your apps.
+3. In Firebase Authentication > Sign-in method, enable Email/Password, Google, and Phone.
+4. Authentication > Settings: add `smallwoodaustin5-crypto.github.io` to Authorized domains.
+5. For phone auth, enable Phone and use reCAPTCHA. For testing, configure test phone numbers in Firebase Auth.
+6. In Firestore, create a database and add rules. The client writes a basic `users/{uid}` profile document after login. Suggested starting rules:
 
-## Firebase
-Enable Email/Password, Google, Apple, and Microsoft providers in Firebase Authentication. Add the deployed site domain under Authentication > Settings > Authorized domains. Login is never automatic; auth only happens when the user clicks a login/register/provider button.
+```rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
 
-## Honest limitations
-- Translation is a tiny built-in phrasebook demo, not a real translation engine. Configure a secure backend for Google Cloud Translation or DeepL; do not expose provider secret keys in frontend code.
-- Camera/scanner features are deliberately disabled for the website.
-- PDF/DOCX/PPTX text extraction and cloud-drive OAuth are placeholders.
-- History and glossary are persisted in localStorage. Firebase Auth is wired; Firestore sync is not fully implemented.
+## Notes
+- GitHub Pages deployment is static; the relative script and stylesheet paths work under `/DocLingo/`.
+- Firebase web config values are not server secrets. Security comes from Authentication and Firestore Security Rules. Do not put private service-account keys in this repository.
+- The translation panel is UI-only and does not call a translation provider yet.
+- After committing, wait for GitHub Pages to deploy and refresh with Ctrl+Shift+R.
