@@ -1,13 +1,7 @@
-// ==========================================
-// DOCLINGO - MAIN APPLICATION
-// Firebase Authentication + Firestore
-// Language Facts + Translation
-// ==========================================
 
 import { firebaseConfig } from "./firebase-config.js";
 
-import { initializeApp } from
-  "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 
 import {
   getAuth,
@@ -20,8 +14,7 @@ import {
   updateProfile,
   RecaptchaVerifier,
   signInWithPhoneNumber
-} from
-  "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
 import {
   getFirestore,
@@ -29,11 +22,10 @@ import {
   setDoc,
   getDoc,
   serverTimestamp
-} from
-  "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 // ==========================================
-// INITIALIZATION
+// FIREBASE INITIALIZATION
 // ==========================================
 
 const app = initializeApp(firebaseConfig);
@@ -41,7 +33,6 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 const googleProvider = new GoogleAuthProvider();
-
 googleProvider.setCustomParameters({
   prompt: "select_account"
 });
@@ -54,32 +45,29 @@ const $ = (id) => document.getElementById(id);
 
 const connectionStatus = $("connectionStatus");
 
+const welcomePanel = $("welcomePanel");
 const dashboard = $("dashboard");
-const welcomeTitle = $("welcomeTitle");
-const welcomeSub = $("welcomeSub");
 
 const openAuthBtn = $("openAuthBtn");
-const heroGetStarted = $("heroGetStarted");
+const signOutBtn = $("signOutBtn");
+
 const authModal = $("authModal");
 const closeAuthBtn = $("closeAuthBtn");
-
-const loginTab = $("loginTab");
-const registerTab = $("registerTab");
 
 const authTitle = $("authTitle");
 const authDescription = $("authDescription");
 
+const loginTab = $("loginTab");
+const registerTab = $("registerTab");
+
 const nameInput = $("nameInput");
-const nameGroup = $("nameGroup");
 const nameLabel = $("nameLabel");
 
 const emailInput = $("emailInput");
 const passwordInput = $("passwordInput");
-
 const emailSubmit = $("emailSubmit");
-const googleBtn = $("googleBtn");
 
-const authError = $("authError");
+const googleBtn = $("googleBtn");
 
 const phoneInput = $("phoneInput");
 const sendCodeBtn = $("sendCodeBtn");
@@ -87,8 +75,12 @@ const codeArea = $("codeArea");
 const codeInput = $("codeInput");
 const verifyCodeBtn = $("verifyCodeBtn");
 
-const signOutBtn = $("signOutBtn");
+const authError = $("authError");
 
+const welcomeTitle = $("welcomeTitle");
+const welcomeSub = $("welcomeSub");
+
+const userAvatar = $("userAvatar");
 const profileAvatar = $("profileAvatar");
 const profileName = $("profileName");
 const profileEmail = $("profileEmail");
@@ -106,168 +98,123 @@ const translateBtn = $("translateBtn");
 const translateOutput = $("translateOutput");
 
 // ==========================================
-// STATE
+// APPLICATION STATE
 // ==========================================
 
-let isRegistering = true;
-let confirmationResult = null;
+let isRegistering = false;
 let recaptchaVerifier = null;
-let previousFactIndex = -1;
+let confirmationResult = null;
+let currentUser = null;
 
 // ==========================================
-// LANGUAGE & COUNTRY FACTS
+// RANDOM LANGUAGE FACTS
 // ==========================================
 
-const facts = [
+const languageFacts = [
   {
-    category: "LANGUAGE FACT",
-    title: "There are thousands of languages.",
-    text: "There are approximately 7,000 languages spoken around the world. However, many are endangered and could disappear within the next century."
+    title: "Japanese has three writing systems",
+    text: "Japanese uses Hiragana, Katakana, and Kanji. They work together in the same written sentence.",
+    category: "JAPANESE"
   },
   {
-    category: "JAPAN",
-    title: "Japanese has three writing systems.",
-    text: "Japanese uses Hiragana, Katakana, and Kanji. All three can appear together in the same sentence."
+    title: "There are over 7,000 languages",
+    text: "Languages are spoken around the world, but many have fewer than 1,000 speakers.",
+    category: "LANGUAGE"
   },
   {
-    category: "LANGUAGE FACT",
-    title: "The longest English word depends on the dictionary.",
-    text: "Some technical chemical names are extraordinarily long, but most dictionaries exclude them from their standard word lists."
+    title: "Spanish is spoken across continents",
+    text: "Spanish is an official language in 20 countries and is spoken by hundreds of millions of people.",
+    category: "SPANISH"
   },
   {
-    category: "SPAIN",
-    title: "Spanish is spoken across multiple continents.",
-    text: "Spanish is the official language of many countries in Europe, North America, Central America, South America, and Africa."
+    title: "Arabic is written from right to left",
+    text: "Arabic writing flows from right to left, and its letters can change shape depending on where they appear in a word.",
+    category: "ARABIC"
   },
   {
-    category: "LANGUAGE FACT",
-    title: "Some languages have no written form.",
-    text: "Many languages around the world are traditionally passed down through speaking, storytelling, songs, and oral history."
+    title: "Korean has a unique alphabet",
+    text: "Hangul was created in the 15th century to make reading and writing more accessible.",
+    category: "KOREAN"
   },
   {
-    category: "FRANCE",
-    title: "French is spoken all around the world.",
-    text: "French is spoken in Europe, Africa, North America, the Caribbean, and many other regions."
+    title: "French is spoken around the world",
+    text: "French is spoken across Europe, Africa, North America, the Caribbean, and parts of Asia.",
+    category: "FRENCH"
   },
   {
-    category: "LANGUAGE FACT",
-    title: "Mandarin has tones.",
-    text: "Mandarin Chinese uses tones to distinguish words. Changing the pitch of a syllable can change its meaning completely."
+    title: "Some languages have no word for blue",
+    text: "Some languages historically grouped blue and green together, showing how languages categorize colors differently.",
+    category: "LINGUISTICS"
   },
   {
-    category: "SOUTH KOREA",
-    title: "Hangul was designed to be easy to learn.",
-    text: "The Korean writing system Hangul was created during the 15th century under King Sejong. Its letters were designed to represent the shapes made by the mouth and tongue."
+    title: "Mandarin uses tones",
+    text: "In Mandarin Chinese, changing the tone of a syllable can change its meaning completely.",
+    category: "MANDARIN"
   },
   {
-    category: "LANGUAGE FACT",
-    title: "Language shapes how we see the world.",
-    text: "Languages can describe colors, relationships, directions, and emotions in ways that differ from one another."
+    title: "English has borrowed many words",
+    text: "English has borrowed vocabulary from languages including French, Latin, Norse, Greek, and many others.",
+    category: "ENGLISH"
   },
   {
-    category: "BRAZIL",
-    title: "Brazil is the largest Portuguese-speaking country.",
-    text: "Brazil has more Portuguese speakers than any other country in the world."
+    title: "Papua New Guinea is incredibly diverse",
+    text: "Papua New Guinea is home to hundreds of languages, making it one of the world's most linguistically diverse countries.",
+    category: "COUNTRIES"
   },
   {
-    category: "LANGUAGE FACT",
-    title: "The word alphabet comes from Greek.",
-    text: "The word alphabet comes from the names of the first two Greek letters: Alpha and Beta."
+    title: "The longest words vary by language",
+    text: "Languages can form extremely long words by combining smaller meaningful parts.",
+    category: "LINGUISTICS"
   },
   {
-    category: "GERMANY",
-    title: "German words can be very long.",
-    text: "German can combine multiple words into a single compound word, creating some impressively long vocabulary."
+    title: "Portuguese is spoken on multiple continents",
+    text: "Portuguese is an official language in countries across Europe, South America, Africa, and Asia.",
+    category: "PORTUGUESE"
   },
   {
-    category: "LANGUAGE FACT",
-    title: "Sign languages are full languages.",
-    text: "Sign languages have their own grammar, vocabulary, and regional variations. They are not simply gestures representing spoken languages."
+    title: "The word 'alphabet' has Greek origins",
+    text: "The word alphabet comes from the names of the first two Greek letters: alpha and beta.",
+    category: "HISTORY"
   },
   {
-    category: "ITALY",
-    title: "Italian has regional varieties.",
-    text: "Italy has many regional dialects and language varieties, reflecting centuries of local history and cultural differences."
+    title: "Sign languages are complete languages",
+    text: "Sign languages have their own grammar, structure, and vocabulary. They are not simply signed versions of spoken languages.",
+    category: "SIGN LANGUAGES"
   },
   {
-    category: "LANGUAGE FACT",
-    title: "English borrows words from many languages.",
-    text: "English vocabulary includes words from Latin, French, Germanic languages, Greek, Arabic, and many other languages."
+    title: "Language changes constantly",
+    text: "New slang, technology, and cultural changes continuously introduce new words and meanings.",
+    category: "LINGUISTICS"
   },
   {
-    category: "INDIA",
-    title: "India is incredibly multilingual.",
-    text: "India is home to hundreds of languages and language varieties, with numerous languages recognized in its constitution."
+    title: "Germany has regional dialects",
+    text: "German varies significantly across regions, with differences in vocabulary, pronunciation, and grammar.",
+    category: "GERMAN"
   },
   {
-    category: "LANGUAGE FACT",
-    title: "Some languages are written from right to left.",
-    text: "Arabic and Hebrew are examples of languages whose writing systems generally run from right to left."
+    title: "Italian has regional variation",
+    text: "Italy has a rich variety of regional dialects and language varieties, some of which differ substantially.",
+    category: "ITALIAN"
   },
   {
-    category: "ICELAND",
-    title: "Icelandic preserves many old words.",
-    text: "Icelandic has maintained many features of its historical language, allowing modern speakers to read some older Icelandic texts."
+    title: "The world's languages are disappearing",
+    text: "Many languages are endangered, and communities are working to preserve their languages and traditions.",
+    category: "CULTURE"
   },
   {
-    category: "LANGUAGE FACT",
-    title: "Learning a language connects you to culture.",
-    text: "Language can reveal traditions, history, humor, and ways of thinking that may not translate directly into another language."
+    title: "A greeting can vary by culture",
+    text: "Different cultures use different greetings, including bows, handshakes, cheek kisses, and verbal expressions.",
+    category: "CULTURE"
   },
   {
-    category: "SWITZERLAND",
-    title: "Switzerland has four national languages.",
-    text: "German, French, Italian, and Romansh are recognized as national languages in Switzerland."
-  },
-  {
-    category: "LANGUAGE FACT",
-    title: "The same word can mean different things.",
-    text: "Words can have completely different meanings depending on the language, region, context, and pronunciation."
-  },
-  {
-    category: "TURKEY",
-    title: "Turkish uses a different alphabet from Arabic.",
-    text: "Modern Turkish uses a Latin-based alphabet, introduced as part of major language reforms in the 1920s."
-  },
-  {
-    category: "LANGUAGE FACT",
-    title: "Children learn languages naturally.",
-    text: "Children can develop language skills through regular exposure, conversation, play, and social interaction."
-  },
-  {
-    category: "MEXICO",
-    title: "Mexico has many indigenous languages.",
-    text: "Mexico recognizes dozens of indigenous language groups, including Nahuatl and several Mayan languages."
-  },
-  {
-    category: "LANGUAGE FACT",
-    title: "Translation is more than replacing words.",
-    text: "Good translation considers context, cultural meaning, tone, and expressions that may not have direct equivalents."
+    title: "Learning languages connects people",
+    text: "Learning another language can help people communicate across cultures and understand different perspectives.",
+    category: "LANGUAGE"
   }
 ];
 
 // ==========================================
-// RANDOM FACT FUNCTION
-// ==========================================
-
-function showRandomFact() {
-  let index;
-
-  do {
-    index = Math.floor(Math.random() * facts.length);
-  } while (index === previousFactIndex && facts.length > 1);
-
-  previousFactIndex = index;
-
-  const fact = facts[index];
-
-  if (factTitle) factTitle.textContent = fact.title;
-  if (factText) factText.textContent = fact.text;
-  if (factCategory) factCategory.textContent = fact.category;
-}
-
-// ==========================================
-// UI HELPERS
+// GENERAL HELPERS
 // ==========================================
 
 function showError(message) {
@@ -290,84 +237,157 @@ function setLoading(button, loading, originalText) {
   button.disabled = loading;
 
   if (loading) {
+    button.dataset.originalText = button.textContent;
     button.textContent = "Please wait...";
   } else {
-    button.textContent = originalText;
+    button.textContent =
+      originalText || button.dataset.originalText || button.textContent;
   }
+}
+
+function getInitials(name) {
+  if (!name) return "D";
+
+  return name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => word.charAt(0).toUpperCase())
+    .join("");
+}
+
+function setConnection(message, connected = false) {
+  if (!connectionStatus) return;
+
+  connectionStatus.innerHTML = "";
+
+  const indicator = document.createElement("i");
+  indicator.className = connected ? "connected" : "";
+
+  const text = document.createElement("span");
+  text.textContent = message;
+
+  connectionStatus.appendChild(indicator);
+  connectionStatus.appendChild(text);
 }
 
 function openModal() {
   if (!authModal) return;
 
   authModal.classList.remove("hidden");
-  hideError();
+  document.body.style.overflow = "hidden";
+
+  if (emailInput) {
+    setTimeout(() => emailInput.focus(), 100);
+  }
 }
 
 function closeModal() {
   if (!authModal) return;
 
   authModal.classList.add("hidden");
+  document.body.style.overflow = "";
+
   hideError();
 }
 
-function setAuthMode(register) {
-  isRegistering = register;
+function setAuthMode(registering) {
+  isRegistering = registering;
 
-  if (register) {
-    authTitle.textContent = "Welcome to DocLingo";
-    authDescription.textContent = "Create an account to start exploring.";
-    emailSubmit.textContent = "Create Account";
+  hideError();
 
-    registerTab.classList.add("active");
-    loginTab.classList.remove("active");
-
-    nameGroup.classList.remove("hidden");
-    nameInput.required = true;
-
-    passwordInput.autocomplete = "new-password";
-  } else {
-    authTitle.textContent = "Welcome back";
-    authDescription.textContent = "Log in to continue your journey.";
-    emailSubmit.textContent = "Log In";
-
-    loginTab.classList.add("active");
-    registerTab.classList.remove("active");
-
-    nameGroup.classList.add("hidden");
-    nameInput.required = false;
-
-    passwordInput.autocomplete = "current-password";
+  if (authTitle) {
+    authTitle.textContent = registering
+      ? "Create your account"
+      : "Welcome back";
   }
 
-  hideError();
+  if (authDescription) {
+    authDescription.textContent = registering
+      ? "Create an account to begin your language journey."
+      : "Sign in to continue your language journey.";
+  }
+
+  if (emailSubmit) {
+    emailSubmit.textContent = registering
+      ? "Create account"
+      : "Sign in";
+  }
+
+  if (nameInput) {
+    nameInput.classList.toggle("hidden", !registering);
+    nameInput.required = registering;
+    nameInput.value = "";
+  }
+
+  if (nameLabel) {
+    nameLabel.classList.toggle("hidden", !registering);
+  }
+
+  if (loginTab) {
+    loginTab.classList.toggle("active", !registering);
+  }
+
+  if (registerTab) {
+    registerTab.classList.toggle("active", registering);
+  }
+
+  if (passwordInput) {
+    passwordInput.autocomplete = registering
+      ? "new-password"
+      : "current-password";
+  }
 }
 
 // ==========================================
-// PROFILE MANAGEMENT
+// FIRESTORE USER PROFILE
 // ==========================================
 
-async function saveUserProfile(user, method) {
+async function saveUserProfile(user, loginMethod) {
   if (!user) return;
 
   const userRef = doc(db, "users", user.uid);
 
-  const existingProfile = await getDoc(userRef);
+  try {
+    const existingProfile = await getDoc(userRef);
 
-  const profileData = {
-    uid: user.uid,
-    displayName: user.displayName || "Language Explorer",
-    email: user.email || null,
-    phoneNumber: user.phoneNumber || null,
-    photoURL: user.photoURL || null,
-    signInMethod: method,
-    lastLogin: serverTimestamp()
-  };
+    const profileData = {
+      uid: user.uid,
+      email: user.email || "",
+      displayName: user.displayName || "",
+      photoURL: user.photoURL || "",
+      loginMethod: loginMethod,
+      lastLogin: serverTimestamp()
+    };
 
-  if (!existingProfile.exists()) {
-    profileData.createdAt = serverTimestamp();
+    if (!existingProfile.exists()) {
+      profileData.createdAt = serverTimestamp();
+    }
+
+    await setDoc(userRef, profileData, {
+      merge: true
+    });
+  } catch (error) {
+    console.error("Failed to save profile:", error);
   }
+}
 
-  await setDoc(userRef, profileData, { merge: true });
+// ==========================================
+// RANDOM FACT DISPLAY
+// ==========================================
+
+function showRandomFact() {
+  if (!factTitle || !factText || !factCategory) return;
+
+  const randomIndex = Math.floor(
+    Math.random() * languageFacts.length
+  );
+
+  const fact = languageFacts[randomIndex];
+
+  factTitle.textContent = fact.title;
+  factText.textContent = fact.text;
+  factCategory.textContent = fact.category;
 }
 
 // ==========================================
@@ -377,66 +397,81 @@ async function saveUserProfile(user, method) {
 function showDashboard(user) {
   if (!user) return;
 
-  dashboard.classList.remove("hidden");
+  currentUser = user;
 
-  // Hide the landing page sections when signed in.
-  document.querySelector(".hero")?.classList.add("hidden");
-  document.querySelector("#features")?.classList.add("hidden");
-  document.querySelector("#languages")?.classList.add("hidden");
+  if (welcomePanel) {
+    welcomePanel.classList.add("hidden");
+  }
 
-  const name =
-    user.displayName ||
-    user.email?.split("@")[0] ||
-    "Language Explorer";
+  if (dashboard) {
+    dashboard.classList.remove("hidden");
+  }
 
-  const firstName = name.split(" ")[0];
+  if (signOutBtn) {
+    signOutBtn.classList.remove("hidden");
+  }
 
-  welcomeTitle.textContent = `Welcome back, ${firstName}!`;
-  welcomeSub.textContent = "Ready to discover something new today?";
+  if (welcomeTitle) {
+    welcomeTitle.textContent = user.displayName
+      ? `Welcome back, ${user.displayName}!`
+      : "Welcome back!";
+  }
 
-  profileName.textContent = name;
-  profileEmail.textContent =
-    user.email || user.phoneNumber || "Account connected";
+  if (welcomeSub) {
+    welcomeSub.textContent =
+      "Here's a little discovery for your language journey.";
+  }
 
-  profileAvatar.textContent =
-    name.charAt(0).toUpperCase();
+  const initials = getInitials(user.displayName);
 
-  profileMethod.textContent =
-    user.phoneNumber
-      ? "Phone"
-      : user.providerData.some(p => p.providerId === "google.com")
-        ? "Google"
-        : "Email";
+  if (userAvatar) {
+    userAvatar.textContent = initials;
+  }
 
-  profileCreated.textContent = user.metadata.creationTime
-    ? new Date(user.metadata.creationTime).toLocaleDateString()
-    : "Recently";
+  if (profileAvatar) {
+    profileAvatar.textContent = initials;
+  }
 
-  profileAvatar.textContent = name.charAt(0).toUpperCase();
+  if (profileName) {
+    profileName.textContent =
+      user.displayName || "DocLingo user";
+  }
+
+  if (profileEmail) {
+    profileEmail.textContent = user.email || "Phone account";
+  }
+
+  if (profileMethod) {
+    profileMethod.textContent = user.providerData?.[0]?.providerId === "google.com"
+      ? "Google Authentication"
+      : user.providerData?.[0]?.providerId === "phone"
+        ? "Phone Authentication"
+        : "Email Authentication";
+  }
+
+  if (profileCreated) {
+    profileCreated.textContent = "Member";
+  }
 
   showRandomFact();
-
-  closeModal();
-
-  openAuthBtn.classList.add("hidden");
-
-  // Scroll to dashboard after login.
-  setTimeout(() => {
-    dashboard.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  }, 200);
 }
 
-function showLandingPage() {
-  dashboard.classList.add("hidden");
+function showWelcomePage() {
+  currentUser = null;
 
-  document.querySelector(".hero")?.classList.remove("hidden");
-  document.querySelector("#features")?.classList.remove("hidden");
-  document.querySelector("#languages")?.classList.remove("hidden");
+  if (welcomePanel) {
+    welcomePanel.classList.remove("hidden");
+  }
 
-  openAuthBtn.classList.remove("hidden");
+  if (dashboard) {
+    dashboard.classList.add("hidden");
+  }
+
+  if (signOutBtn) {
+    signOutBtn.classList.add("hidden");
+  }
+
+  setConnection("Connected", true);
 }
 
 // ==========================================
@@ -445,293 +480,60 @@ function showLandingPage() {
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    try {
-      const provider = user.providerData[0]?.providerId;
+    currentUser = user;
 
-      let method = "Email";
+    setConnection("Connected", true);
 
-      if (provider === "google.com") {
-        method = "Google";
-      } else if (provider === "phone") {
-        method = "Phone";
-      }
+    await saveUserProfile(
+      user,
+      user.providerData?.[0]?.providerId === "google.com"
+        ? "Google"
+        : user.providerData?.[0]?.providerId === "phone"
+          ? "Phone"
+          : "Email"
+    );
 
-      await saveUserProfile(user, method);
-
-      showDashboard(user);
-
-      if (connectionStatus) {
-        connectionStatus.innerHTML = `
-          <span class="status-dot" style="background:#22c55e"></span>
-          Connected
-        `;
-      }
-    } catch (error) {
-      console.error("Profile error:", error);
-
-      showDashboard(user);
-    }
+    showDashboard(user);
+    closeModal();
   } else {
-    showLandingPage();
-
-    if (connectionStatus) {
-      connectionStatus.innerHTML = `
-        <span class="status-dot" style="background:#22c55e"></span>
-        Ready
-      `;
-    }
+    showWelcomePage();
   }
 });
 
 // ==========================================
-// EMAIL AUTHENTICATION
+// MODAL BUTTONS
 // ==========================================
 
-emailSubmit.addEventListener("click", async () => {
-  hideError();
-
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
-  const name = nameInput.value.trim();
-
-  if (!email || !password) {
-    showError("Please enter your email and password.");
-    return;
-  }
-
-  if (password.length < 6) {
-    showError("Your password must be at least 6 characters.");
-    return;
-  }
-
-  if (isRegistering && !name) {
-    showError("Please enter your name.");
-    return;
-  }
-
-  const originalText = isRegistering
-    ? "Create Account"
-    : "Log In";
-
-  setLoading(emailSubmit, true);
-
-  try {
-    if (isRegistering) {
-      const result = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      await updateProfile(result.user, {
-        displayName: name
-      });
-
-      await saveUserProfile(result.user, "Email");
-    } else {
-      await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-    }
-  } catch (error) {
-    console.error(error);
-
-    switch (error.code) {
-      case "auth/email-already-in-use":
-        showError("This email already has an account. Try logging in.");
-        break;
-
-      case "auth/invalid-email":
-        showError("Please enter a valid email address.");
-        break;
-
-      case "auth/weak-password":
-        showError("Please choose a stronger password.");
-        break;
-
-      case "auth/invalid-credential":
-      case "auth/wrong-password":
-      case "auth/user-not-found":
-        showError("Incorrect email or password.");
-        break;
-
-      case "auth/too-many-requests":
-        showError("Too many attempts. Please try again later.");
-        break;
-
-      default:
-        showError(error.message || "Something went wrong.");
-    }
-  } finally {
-    setLoading(emailSubmit, false, originalText);
-  }
-});
-
-// ==========================================
-// GOOGLE LOGIN
-// ==========================================
-
-googleBtn.addEventListener("click", async () => {
-  hideError();
-
-  try {
-    await signInWithPopup(auth, googleProvider);
-  } catch (error) {
-    console.error(error);
-
-    if (error.code === "auth/popup-closed-by-user") {
-      showError("Login window was closed.");
-    } else if (error.code === "auth/popup-blocked") {
-      showError("Please allow popups for Google login.");
-    } else {
-      showError(error.message || "Google login failed.");
-    }
-  }
-});
-
-// ==========================================
-// PHONE AUTHENTICATION
-// ==========================================
-
-function setupRecaptcha() {
-  if (recaptchaVerifier) return recaptchaVerifier;
-
-  recaptchaVerifier = new RecaptchaVerifier(
-    auth,
-    "recaptcha-container",
-    {
-      size: "normal",
-      callback: () => {
-        console.log("reCAPTCHA verified");
-      },
-      "expired-callback": () => {
-        console.log("reCAPTCHA expired");
-      }
-    }
-  );
-
-  return recaptchaVerifier;
+if (openAuthBtn) {
+  openAuthBtn.addEventListener("click", () => {
+    setAuthMode(false);
+    openModal();
+  });
 }
 
-sendCodeBtn.addEventListener("click", async () => {
-  hideError();
+if (closeAuthBtn) {
+  closeAuthBtn.addEventListener("click", closeModal);
+}
 
-  const phoneNumber = phoneInput.value.trim();
+if (authModal) {
+  authModal.addEventListener("click", (event) => {
+    if (event.target === authModal) {
+      closeModal();
+    }
+  });
+}
 
-  if (!phoneNumber) {
-    showError("Enter your phone number including country code.");
-    return;
-  }
+if (loginTab) {
+  loginTab.addEventListener("click", () => {
+    setAuthMode(false);
+  });
+}
 
-  try {
-    const verifier = setupRecaptcha();
-
-    await verifier.render();
-
-    confirmationResult = await signInWithPhoneNumber(
-      auth,
-      phoneNumber,
-      verifier
-    );
-
-    codeArea.classList.remove("hidden");
-
-    sendCodeBtn.textContent = "Code Sent!";
-    sendCodeBtn.disabled = true;
-
-    showError("Verification code sent to your phone.");
-
-    authError.style.background =
-      "rgba(34,197,94,0.08)";
-
-    authError.style.borderColor =
-      "rgba(34,197,94,0.2)";
-
-    authError.style.color =
-      "#86efac";
-
-  } catch (error) {
-    console.error(error);
-
-    showError(
-      error.message ||
-      "Unable to send verification code."
-    );
-  }
-});
-
-verifyCodeBtn.addEventListener("click", async () => {
-  hideError();
-
-  const code = codeInput.value.trim();
-
-  if (!code) {
-    showError("Enter the verification code.");
-    return;
-  }
-
-  if (!confirmationResult) {
-    showError("Please request a verification code first.");
-    return;
-  }
-
-  try {
-    await confirmationResult.confirm(code);
-  } catch (error) {
-    console.error(error);
-
-    showError("Invalid verification code. Please try again.");
-  }
-});
-
-// ==========================================
-// SIGN OUT
-// ==========================================
-
-signOutBtn.addEventListener("click", async () => {
-  try {
-    await signOut(auth);
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  } catch (error) {
-    console.error("Sign out failed:", error);
-  }
-});
-
-// ==========================================
-// MODAL CONTROLS
-// ==========================================
-
-openAuthBtn.addEventListener("click", () => {
-  setAuthMode(true);
-  openModal();
-});
-
-heroGetStarted.addEventListener("click", () => {
-  setAuthMode(true);
-  openModal();
-});
-
-closeAuthBtn.addEventListener("click", closeModal);
-
-authModal.addEventListener("click", (event) => {
-  if (event.target === authModal) {
-    closeModal();
-  }
-});
-
-loginTab.addEventListener("click", () => {
-  setAuthMode(false);
-});
-
-registerTab.addEventListener("click", () => {
-  setAuthMode(true);
-});
+if (registerTab) {
+  registerTab.addEventListener("click", () => {
+    setAuthMode(true);
+  });
+}
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
@@ -740,13 +542,263 @@ document.addEventListener("keydown", (event) => {
 });
 
 // ==========================================
+// EMAIL AUTHENTICATION
+// ==========================================
+
+const emailForm = $("emailForm");
+
+if (emailForm) {
+  emailForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    hideError();
+
+    const email = emailInput?.value.trim() || "";
+    const password = passwordInput?.value || "";
+    const name = nameInput?.value.trim() || "";
+
+    if (!email || !password) {
+      showError("Please enter your email and password.");
+      return;
+    }
+
+    if (password.length < 6) {
+      showError("Password must be at least 6 characters.");
+      return;
+    }
+
+    if (isRegistering && !name) {
+      showError("Please enter your name.");
+      return;
+    }
+
+    setLoading(emailSubmit, true);
+
+    try {
+      if (isRegistering) {
+        const result = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        await updateProfile(result.user, {
+          displayName: name
+        });
+
+        await saveUserProfile(result.user, "Email");
+      } else {
+        await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+      }
+    } catch (error) {
+      console.error("Email authentication error:", error);
+
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          showError("This email already has an account. Please sign in.");
+          break;
+
+        case "auth/invalid-email":
+          showError("Please enter a valid email address.");
+          break;
+
+        case "auth/weak-password":
+          showError("Your password is too weak.");
+          break;
+
+        case "auth/invalid-credential":
+        case "auth/wrong-password":
+        case "auth/user-not-found":
+          showError("Incorrect email or password.");
+          break;
+
+        case "auth/too-many-requests":
+          showError("Too many attempts. Please try again later.");
+          break;
+
+        case "auth/network-request-failed":
+          showError("Network error. Check your internet connection.");
+          break;
+
+        default:
+          showError(error.message || "Authentication failed.");
+      }
+    } finally {
+      setLoading(emailSubmit, false);
+    }
+  });
+}
+
+// ==========================================
+// GOOGLE AUTHENTICATION
+// ==========================================
+
+if (googleBtn) {
+  googleBtn.addEventListener("click", async () => {
+    hideError();
+
+    setLoading(googleBtn, true);
+
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error("Google login error:", error);
+
+      if (error.code === "auth/popup-closed-by-user") {
+        showError("The sign-in window was closed.");
+      } else if (error.code === "auth/popup-blocked") {
+        showError("Please allow popups for Google sign-in.");
+      } else if (error.code === "auth/unauthorized-domain") {
+        showError("This website is not authorized in Firebase.");
+      } else {
+        showError(error.message || "Google sign-in failed.");
+      }
+    } finally {
+      setLoading(googleBtn, false);
+    }
+  });
+}
+
+// ==========================================
+// PHONE AUTHENTICATION
+// ==========================================
+
+function setupRecaptcha() {
+  if (recaptchaVerifier) {
+    return recaptchaVerifier;
+  }
+
+  const recaptchaContainer = $("recaptcha-container");
+
+  if (!recaptchaContainer) {
+    throw new Error("reCAPTCHA container is missing.");
+  }
+
+  recaptchaVerifier = new RecaptchaVerifier(
+    auth,
+    "recaptcha-container",
+    {
+      size: "normal",
+      callback: () => {
+        console.log("reCAPTCHA verified.");
+      },
+      "expired-callback": () => {
+        console.log("reCAPTCHA expired.");
+      }
+    }
+  );
+
+  return recaptchaVerifier;
+}
+
+if (sendCodeBtn) {
+  sendCodeBtn.addEventListener("click", async () => {
+    hideError();
+
+    const phoneNumber = phoneInput?.value.trim() || "";
+
+    if (!phoneNumber) {
+      showError("Enter your phone number with country code.");
+      return;
+    }
+
+    setLoading(sendCodeBtn, true);
+
+    try {
+      const verifier = setupRecaptcha();
+
+      confirmationResult = await signInWithPhoneNumber(
+        auth,
+        phoneNumber,
+        verifier
+      );
+
+      if (codeArea) {
+        codeArea.classList.remove("hidden");
+      }
+
+      showError("Verification code sent. Check your phone.");
+    } catch (error) {
+      console.error("Phone authentication error:", error);
+
+      showError(error.message || "Failed to send verification code.");
+
+      if (recaptchaVerifier) {
+        try {
+          recaptchaVerifier.clear();
+        } catch {}
+
+        recaptchaVerifier = null;
+      }
+    } finally {
+      setLoading(sendCodeBtn, false);
+    }
+  });
+}
+
+if (verifyCodeBtn) {
+  verifyCodeBtn.addEventListener("click", async () => {
+    hideError();
+
+    const code = codeInput?.value.trim() || "";
+
+    if (!confirmationResult) {
+      showError("Please request a verification code first.");
+      return;
+    }
+
+    if (!code) {
+      showError("Enter the verification code.");
+      return;
+    }
+
+    setLoading(verifyCodeBtn, true);
+
+    try {
+      await confirmationResult.confirm(code);
+    } catch (error) {
+      console.error("Code verification error:", error);
+
+      showError("Invalid verification code. Please try again.");
+    } finally {
+      setLoading(verifyCodeBtn, false);
+    }
+  });
+}
+
+// ==========================================
+// SIGN OUT
+// ==========================================
+
+if (signOutBtn) {
+  signOutBtn.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    } catch (error) {
+      console.error("Sign out failed:", error);
+    }
+  });
+}
+
+// ==========================================
 // RANDOM FACT BUTTON
 // ==========================================
 
-newFactBtn.addEventListener("click", showRandomFact);
+if (newFactBtn) {
+  newFactBtn.addEventListener("click", showRandomFact);
+}
 
 // ==========================================
-// TRANSLATOR
+// TRANSLATION
 // ==========================================
 
 const languageCodes = {
@@ -755,8 +807,8 @@ const languageCodes = {
   Japanese: "ja",
   German: "de",
   Korean: "ko",
-  Portuguese: "pt",
   Italian: "it",
+  Portuguese: "pt",
   Chinese: "zh",
   Russian: "ru",
   Arabic: "ar"
@@ -782,104 +834,97 @@ async function translateText(text, targetLanguage) {
 
   const data = await response.json();
 
-  if (
-    !data.responseData ||
-    !data.responseData.translatedText
-  ) {
+  if (!data.responseData?.translatedText) {
     throw new Error("Unable to translate this text.");
   }
 
   return data.responseData.translatedText;
 }
 
-translateBtn.addEventListener("click", async () => {
-  const text = translateInput.value.trim();
-  const targetLanguage = languageSelect.value;
+if (translateBtn) {
+  translateBtn.addEventListener("click", async () => {
+    const text = translateInput?.value.trim() || "";
+    const targetLanguage = languageSelect?.value || "Spanish";
 
-  if (!text) {
-    translateOutput.textContent =
-      "Please enter some text to translate.";
-    return;
-  }
-
-  if (text.length > 5000) {
-    translateOutput.textContent =
-      "Please keep your text under 5,000 characters.";
-    return;
-  }
-
-  translateBtn.disabled = true;
-  translateBtn.textContent = "Translating...";
-
-  translateOutput.textContent =
-    "Working on your translation...";
-
-  try {
-    const translated = await translateText(
-      text,
-      targetLanguage
-    );
-
-    translateOutput.innerHTML = "";
-
-    const result = document.createElement("div");
-    result.textContent = translated;
-
-    const copyButton = document.createElement("button");
-    copyButton.className = "btn btn-secondary";
-    copyButton.textContent = "Copy Translation";
-    copyButton.style.marginTop = "15px";
-
-    copyButton.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(translated);
-
-        copyButton.textContent = "Copied!";
-        setTimeout(() => {
-          copyButton.textContent = "Copy Translation";
-        }, 2000);
-      } catch {
-        copyButton.textContent = "Unable to copy";
+    if (!text) {
+      if (translateOutput) {
+        translateOutput.textContent = "Please enter text to translate.";
+        translateOutput.classList.remove("hidden");
       }
-    });
+      return;
+    }
 
-    translateOutput.appendChild(result);
-    translateOutput.appendChild(copyButton);
+    if (text.length > 5000) {
+      if (translateOutput) {
+        translateOutput.textContent =
+          "Please keep your text under 5,000 characters.";
+        translateOutput.classList.remove("hidden");
+      }
+      return;
+    }
 
-  } catch (error) {
-    console.error(error);
+    setLoading(translateBtn, true, "Translate ↗");
 
-    translateOutput.textContent =
-      error.message ||
-      "Translation failed. Please try again.";
-  } finally {
-    translateBtn.disabled = false;
-    translateBtn.textContent = "Translate →";
-  }
-});
+    if (translateOutput) {
+      translateOutput.textContent = "Translating...";
+      translateOutput.classList.remove("hidden");
+    }
+
+    try {
+      const translated = await translateText(
+        text,
+        targetLanguage
+      );
+
+      if (!translateOutput) return;
+
+      translateOutput.innerHTML = "";
+
+      const result = document.createElement("div");
+      result.textContent = translated;
+
+      const copyButton = document.createElement("button");
+      copyButton.className = "btn btn-secondary";
+      copyButton.textContent = "Copy translation";
+
+      copyButton.style.marginTop = "15px";
+
+      copyButton.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(translated);
+          copyButton.textContent = "Copied!";
+
+          setTimeout(() => {
+            copyButton.textContent = "Copy translation";
+          }, 2000);
+        } catch {
+          copyButton.textContent = "Unable to copy";
+        }
+      });
+
+      translateOutput.appendChild(result);
+      translateOutput.appendChild(copyButton);
+      translateOutput.classList.remove("hidden");
+    } catch (error) {
+      console.error("Translation error:", error);
+
+      if (translateOutput) {
+        translateOutput.textContent =
+          error.message || "Translation failed.";
+        translateOutput.classList.remove("hidden");
+      }
+    } finally {
+      setLoading(translateBtn, false, "Translate ↗");
+    }
+  });
+}
 
 // ==========================================
-// ENTER KEY SUPPORT
+// INITIALIZATION
 // ==========================================
 
-passwordInput.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    emailSubmit.click();
-  }
-});
+setAuthMode(false);
 
-codeInput.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    verifyCodeBtn.click();
-  }
-});
-
-// ==========================================
-// INITIAL UI
-// ==========================================
-
-showRandomFact();
-
-setAuthMode(true);
+setConnection("Connecting...", false);
 
 console.log("DocLingo initialized successfully.");
