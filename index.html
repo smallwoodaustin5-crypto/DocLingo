@@ -1,1 +1,219 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><meta name="theme-color" content="#7c3aed"/><title>DocLingo</title></head><body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#7c3aed" />
+  <title>DocLingo</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="navbar">
+      <a href="#" class="brand">
+        <div class="logo">D</div>
+        <span>DocLingo</span>
+      </a>
+
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+      </nav>
+
+      <button class="login-btn" id="loginBtn">Sign in</button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="badge">
+          <span class="dot"></span>
+          Your personal language assistant
+        </div>
+
+        <h1>
+          Words connect us.<br />
+          <span>DocLingo translates.</span>
+        </h1>
+
+        <p>
+          Translate text, understand new languages, and save
+          your favorite translations — all in one place.
+        </p>
+
+        <div class="hero-actions">
+          <button class="primary-btn" id="startBtn">
+            Get started <span>→</span>
+          </button>
+          <button class="secondary-btn" id="learnBtn">
+            Explore features
+          </button>
+        </div>
+      </section>
+
+      <section class="translator" id="translator">
+        <div class="translator-header">
+          <div>
+            <span class="section-label">TRANSLATOR</span>
+            <h2>Translate anything</h2>
+          </div>
+          <div class="status" id="firebaseStatus">
+            Checking Firebase...
+          </div>
+        </div>
+
+        <div class="language-bar">
+          <select id="sourceLanguage">
+            <option value="English">English</option>
+            <option value="Spanish">Spanish</option>
+            <option value="French">French</option>
+            <option value="German">German</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Korean">Korean</option>
+            <option value="Chinese">Chinese</option>
+          </select>
+
+          <button class="swap-btn" id="swapBtn">⇄</button>
+
+          <select id="targetLanguage">
+            <option value="Spanish">Spanish</option>
+            <option value="English">English</option>
+            <option value="French">French</option>
+            <option value="German">German</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Korean">Korean</option>
+            <option value="Chinese">Chinese</option>
+          </select>
+        </div>
+
+        <div class="translation-grid">
+          <div class="translation-panel">
+            <div class="panel-title">
+              <span>Original text</span>
+              <span id="characterCount">0 / 5000</span>
+            </div>
+
+            <textarea
+              id="sourceText"
+              maxlength="5000"
+              placeholder="Enter text to translate..."
+            ></textarea>
+
+            <button class="clear-btn" id="clearBtn">
+              Clear text
+            </button>
+          </div>
+
+          <div class="translation-panel result-panel">
+            <div class="panel-title">
+              <span>Translation</span>
+              <span id="resultLanguage">Spanish</span>
+            </div>
+
+            <div id="translationResult" class="result">
+              Your translation will appear here.
+            </div>
+
+            <button class="copy-btn" id="copyBtn">
+              Copy translation
+            </button>
+          </div>
+        </div>
+
+        <div class="translator-footer">
+          <span id="message">
+            Enter text to begin.
+          </span>
+
+          <button class="primary-btn translate-btn" id="translateBtn">
+            Translate <span>→</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="features" id="features">
+        <div class="feature-card">
+          <div class="feature-icon">✦</div>
+          <h3>Easy translations</h3>
+          <p>Translate text between languages with a simple interface.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⌑</div>
+          <h3>Translation history</h3>
+          <p>Keep track of your previous translations.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">♡</div>
+          <h3>Save favorites</h3>
+          <p>Save useful phrases for future reference.</p>
+        </div>
+      </section>
+
+      <section class="about" id="about">
+        <h2>Languages bring us closer.</h2>
+        <p>
+          DocLingo is designed to make communicating across
+          languages easier, faster, and more accessible.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <span>© 2026 DocLingo</span>
+      <span>Made for better communication.</span>
+    </footer>
+  </div>
+
+  <div class="modal" id="authModal">
+    <div class="modal-card">
+      <button class="modal-close" id="closeModal">×</button>
+
+      <div class="logo modal-logo">D</div>
+
+      <h2>Welcome to DocLingo</h2>
+      <p>Sign in or create an account to get started.</p>
+
+      <div class="auth-tabs">
+        <button class="active" id="signinTab">Sign in</button>
+        <button id="signupTab">Create account</button>
+      </div>
+
+      <form id="authForm">
+        <label>Email</label>
+        <input
+          id="email"
+          type="email"
+          placeholder="you@example.com"
+          required
+        />
+
+        <label>Password</label>
+        <input
+          id="password"
+          type="password"
+          placeholder="Enter password"
+          required
+          minlength="6"
+        />
+
+        <button type="submit" class="primary-btn full-btn" id="authSubmit">
+          Sign in
+        </button>
+      </form>
+
+      <div class="separator">OR</div>
+
+      <button class="google-btn" id="googleBtn">
+        <span class="google-icon">G</span>
+        Continue with Google
+      </button>
+
+      <p class="auth-message" id="authMessage"></p>
+    </div>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
