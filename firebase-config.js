@@ -1,4 +1,3 @@
-
 export const firebaseConfig = {
   apiKey: "AIzaSyDmpQMQrL7MCsjtf9pB0pCu4aw6QCq-Z4",
   authDomain: "doclingo-85b13.firebaseapp.com",
